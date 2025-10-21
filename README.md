@@ -20,7 +20,10 @@ Requisitos
 7.	Un repositorio público de GitHub debe compartirse con confirmaciones frecuentes
 8.	Se debe grabar un video ( www.loom.com ) de usted hablando sobre el código de la aplicación, IAC y cualquier área adicional que desee resaltar en su solución para demostrar habilidades adicionales.
 
-prueba local de la app
+
+LINK VIDEO 
+
+prueba lochttps://www.loom.com/share/64326613dd7746db9fe09166dae730d7al de la app
 
 <img width="1823" height="952" alt="image" src="https://github.com/user-attachments/assets/8a5bbdb3-8a53-47ec-912f-07b850427833" />
 
