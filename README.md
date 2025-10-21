@@ -115,4 +115,7 @@ TALBLA WAREHOUSE
 
 <img width="1842" height="827" alt="Captura de pantalla 2025-10-21 081718wharehousetabledinamo" src="https://github.com/user-attachments/assets/40368053-68f6-4019-a889-aa7ebd55ae92" />
 
-  
+ app implmentada en localhost
+ 
+ <img width="1823" height="952" alt="image" src="https://github.com/user-attachments/assets/517e0aa1-4537-41ce-9b0d-5a66db0e7ad7" />
+
