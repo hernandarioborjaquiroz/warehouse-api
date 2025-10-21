@@ -1,0 +1,41 @@
+'use strict';
+const AWS = require('aws-sdk');
+
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const TABLE_NAME = 'warehouse-table';
+
+// ... (otras funciones como createItem)
+
+module.exports.getItem = async (event) => {
+  const { id } = event.pathParameters;
+
+  const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      id: id,
+    },
+  };
+
+  try {
+    const result = await dynamoDb.get(params).promise();
+
+    // Si el ítem no se encuentra, DynamoDB devuelve un objeto con un 'Item' vacío.
+    if (!result.Item) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: 'Ítem no encontrado' }),
+      };
+    }
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(result.Item),
+    };
+  } catch (error) {
+    console.error("Error al obtener el ítem:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Error interno del servidor' }),
+    };
+  }
+};

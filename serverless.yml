@@ -1,0 +1,65 @@
+service: warehouse-api
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+
+  # ✅ Bloque IAM corregido
+  iamRoleStatements:
+  - Effect: "Allow"
+    Action:
+    - dynamodb:GetItem
+    - dynamodb:PutItem
+    - dynamodb:UpdateItem
+    - dynamodb:DeleteItem
+    Resource:
+    - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/warehouse-table-${sls:stage}
+
+functions:
+  # 1️⃣ Crear (POST /items)
+  createItem:
+    handler: handler.createItem
+    events:
+    - http:
+        path: items
+        method: post
+
+  # 2️⃣ Obtener (GET /items/{id})
+  getItem:
+    handler: handler.getItem
+    events:
+    - http:
+        path: items/{id}
+        method: get
+
+  # 3️⃣ Actualizar (PUT /items/{id})
+  updateItem:
+    handler: handler.updateItem
+    events:
+    - http:
+        path: items/{id}
+        method: put
+
+  # 4️⃣ Eliminar (DELETE /items/{id})
+  deleteItem:
+    handler: handler.deleteItem
+    events:
+    - http:
+        path: items/{id}
+        method: delete
+
+resources:
+  Resources:
+    WarehouseTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        # ⚙️ Nombre de la tabla dinámico por stage
+        TableName: warehouse-table-${sls:stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"

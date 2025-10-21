@@ -1,0 +1,33 @@
+'use strict';
+const AWS = require('aws-sdk');
+
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const TABLE_NAME = 'warehouse-table';
+
+// ... (otras funciones como createItem, getItem)
+
+module.exports.deleteItem = async (event) => {
+  const { id } = event.pathParameters;
+
+  const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      id: id,
+    },
+  };
+
+  try {
+    // La operación se considera exitosa incluso si el ítem no existe.
+    await dynamoDb.delete(params).promise();
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'Ítem eliminado con éxito' }),
+    };
+  } catch (error) {
+    console.error("Error al eliminar el ítem:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Error interno del servidor' }),
+    };
+  }
+};

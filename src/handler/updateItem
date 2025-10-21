@@ -1,0 +1,64 @@
+'use strict';
+const AWS = require('aws-sdk');
+
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const TABLE_NAME = 'warehouse-table';
+
+// ... (otras funciones)
+
+module.exports.updateItem = async (event) => {
+  const { id } = event.pathParameters;
+  const data = JSON.parse(event.body);
+
+  // Generar dinámicamente la expresión de actualización
+  let UpdateExpression = 'set';
+  const ExpressionAttributeNames = {};
+  const ExpressionAttributeValues = {};
+
+  for (const key in data) {
+    if (key !== 'id') {
+      const attributeName = `#${key}`;
+      const attributeValue = `:${key}`;
+      UpdateExpression += ` ${attributeName} = ${attributeValue},`;
+      ExpressionAttributeNames[attributeName] = key;
+      ExpressionAttributeValues[attributeValue] = data[key];
+    }
+  }
+
+  // Eliminar la última coma de la expresión de actualización
+  UpdateExpression = UpdateExpression.slice(0, -1);
+
+  const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      id: id,
+    },
+    UpdateExpression,
+    ExpressionAttributeNames,
+    ExpressionAttributeValues,
+    ReturnValues: 'UPDATED_NEW',
+  };
+
+  try {
+    const result = await dynamoDb.update(params).promise();
+
+    // Comprobar si el ítem fue encontrado y actualizado
+    if (!result.Attributes) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: 'Ítem no encontrado' }),
+      };
+    }
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(result.Attributes),
+    };
+  } catch (error) {
+    console.error("Error al actualizar el ítem:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Error interno del servidor' }),
+    };
+  }
+};
